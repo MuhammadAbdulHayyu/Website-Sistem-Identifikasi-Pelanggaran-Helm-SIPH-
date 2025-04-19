@@ -1,0 +1,78 @@
+/* Struktur utama */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  background-color: #D9D9D9; /* Warna background sesuai gambar */
+}
+
+/* Judul utama */
+.title {
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Kotak login */
+.login-box {
+  background-color: #A1A1A1; /* Warna sesuai gambar */
+  padding: 40px;
+  border-radius: 15px;
+  text-align: center;
+  width: 350px;
+}
+
+h2 {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Form input */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+label {
+  display: block;
+  color: white;
+  font-size: 12px;
+  margin-top: 10px;
+  align-self: flex-start;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  margin-top: 5px;
+  background-color: #D9D9D9;
+  color: black;
+}
+
+/* Lupa password */
+.forgot-password {
+  color: white;
+  font-size: 12px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* Tombol login */
+.login-button {
+  background-color: #D9D9D9;
+  border: none;
+  width: 100%;
+  padding: 10px;
+  margin-top: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}

@@ -53,7 +53,7 @@ const Foto = () => {
       </div>
 
       {fotoData[formatDate(selectedDate)] && (
-        <button className="all-download">All Download</button>
+        <button className="all-download">Download All</button>
       )}
     </div>
   );

@@ -14,33 +14,16 @@ const Sidebar = () => {
         <li>
           <NavLink to="/Dashboard" exact activeClassName="active">
             <FaHome className="icon" />
-            Dashboard
+            Home
           </NavLink>
         </li>
 
-        {/* Data Pelanggaran - Accordion */}
-        <li onClick={() => setIsAccordionOpen(!isAccordionOpen)} className="accordion">
-          <FaDatabase className="icon" />
-          Data Pelanggaran
-          <FaChevronDown className={`arrow-icon ${isAccordionOpen ? "open" : ""}`} />
+        <li>
+          <NavLink to="/Pelanggaran" exact activeClassName="active">
+            <FaDatabase className="icon" />
+            Data Pelanggaran
+          </NavLink>
         </li>
-
-        {isAccordionOpen && (
-          <ul className="submenu">
-            <li>
-              <NavLink to="/DataFoto" activeClassName="active">
-                Data Foto
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/DataVideo" activeClassName="active">
-                Data Video
-              </NavLink>
-            </li>
-          </ul>
-        )}
-
-        {/* Pengaduan */}
         <li>
           <NavLink to="/DataPengaduan" activeClassName="active">
             <FaExclamationCircle className="icon" />

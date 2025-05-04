@@ -1,10 +1,23 @@
 import React from "react";
 import { FaSignOutAlt } from "react-icons/fa";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebaseConfig"; // pastikan path sesuai
+import { useNavigate } from "react-router-dom";
 import "./AdminNavbar.css";
 
 const AdminNavbar = () => {
-  const handleLogout = () => {
-    alert("Anda telah logout!");
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    const confirm = window.confirm("Yakin ingin keluar?");
+    if (!confirm) return;
+  
+    try {
+      await signOut(auth);
+      navigate("/LoginAdmin", {replace: true});
+    } catch (error) {
+      console.error("Gagal logout:", error);
+    }
   };
 
   return (

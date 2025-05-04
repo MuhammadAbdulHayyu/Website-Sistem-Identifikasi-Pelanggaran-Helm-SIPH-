@@ -1,6 +1,10 @@
-import React from "react";
+// admin.jsx
+import React, { useState, useEffect } from "react";
 import "../AdminDashboard/Admin.css";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { db } from "../../firebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
+
 
 const dataPelanggaranMingguan = [
   { name: "Memakai Helm", value: 220, color: "#00b4d8" },
@@ -17,19 +21,57 @@ const dataBar = [
 ];
 
 const Dashboard = () => {
+  const [pengaduan, setPengaduan] = useState([]);
+
+  useEffect(() => {
+    const fetchPengaduan = async () => {
+      const pengaduanCollection = collection(db, 'pengaduan');
+      const snapshot = await getDocs(pengaduanCollection);
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setPengaduan(data);
+    };
+
+    fetchPengaduan();
+  }, []);
+
+  const formatWaktu = (timestamp) => {
+    if (!timestamp?.toDate) return 'Waktu tidak tersedia';
+    return timestamp.toDate().toLocaleDateString('id-ID', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  };
+
+  const YouTubeLive = () => {
+    const videoId = 'NXnHKOhZmfU';
+    return (
+      <div className="video-container">
+        <iframe
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+          frameBorder="0"
+          allow="autoplay; encrypted-media"
+          allowFullScreen
+          title="YouTube Live Stream"
+          className="video-iframe"
+        />
+      </div>
+    );
+  };
+  
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-content">
-        {/* Live Stream */}
-        <div className="livestream">
+       
           <div className="video-box">
-            <p className="live-text">LIVE</p>
+            <p className="live-text"></p>
+            <YouTubeLive /> 
           </div>
-        </div>
+       
 
         {/* Statistik & Pengaduan */}
         <div className="dashboard-widgets">
-          {/* Statistik */}
           <div className="widget">
             <h3>Statistik</h3>
             <ResponsiveContainer width="100%" height={200}>
@@ -47,31 +89,34 @@ const Dashboard = () => {
             <p><strong>Pelanggaran Helm:</strong> {dataPelanggaranMingguan[1].value}</p>
           </div>
 
-          {/* Pengaduan */}
           <div className="table-container">
             <h3>Pengaduan</h3>
             <table>
               <thead>
                 <tr>
-                  <th>Nama</th>
-                  <th>Tanggal</th>
-                  <th>Checklist</th>
+                  <th>Judul</th>
+                  <th>Waktu</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {Array.from({ length: 8 }, (_, i) => (
-                  <tr key={i}>
-                    <td>anonymous {i + 1}</td>
-                    <td>12-01-2024</td>
-                    <td><input type="checkbox" /></td>
+                {pengaduan.slice(0, 8).map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.judulPengaduan}</td>
+                    <td>{formatWaktu(item.timestamp)}</td>
+                    <td>{item.status || 'Belum Diproses'}</td>
                   </tr>
                 ))}
+                {pengaduan.length === 0 && (
+                  <tr>
+                    <td colSpan="3" style={{ textAlign: 'center' }}>Belum ada data pengaduan</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
         </div>
 
-        {/* Grafik Bar */}
         <div className="chart-container">
           <h3>Statistik Pelanggaran Helm</h3>
           <ResponsiveContainer width="100%" height={250}>

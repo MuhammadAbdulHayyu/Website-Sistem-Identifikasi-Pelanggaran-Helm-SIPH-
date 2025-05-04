@@ -50,10 +50,11 @@ function IsiPengaduan() {
         <div className="Pengaduan">
           <h2 className="judul">Form Pengaduan</h2>
     
-          <div className="form-group">
+          <div className="Judul">
             <subjudul>Judul Pengaduan</subjudul>
             <input
               type="text"
+              className="input-judul"
               value={judulPengaduan}
               onChange={(e) => setJudulPengaduan(e.target.value)}
               placeholder="Judul Pengaduan"
@@ -73,6 +74,7 @@ function IsiPengaduan() {
             <subjudul>Bukti Gambar</subjudul>
             <input
               type="file"
+              className="input-bukti"
               onChange={(e) => setFile(e.target.files[0])}
             />
           </div>

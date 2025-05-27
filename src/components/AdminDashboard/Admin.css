@@ -98,6 +98,7 @@ th, td {
 
 
 
+
 /* Chart Pelanggaran Helm */
 .chart-container {
     background: white;
@@ -105,4 +106,28 @@ th, td {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
+}
+
+/* Status Badge */
+.status-option {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+  color: #fff;
+  background-color: #ccc;
+}
+
+.status-belum {
+  background-color: #f0ad4e;
+}
+
+.status-diproses {
+  background-color: #5bc0de;
+}
+
+.status-selesai {
+  background-color: #5cb85c;
 }

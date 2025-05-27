@@ -11,47 +11,49 @@ function IsiPengaduan() {
     const [file, setFile] = useState(null);
 
     const saveData = async () => {
-        try {
-          const firestore = getFirestore(app);
-          const storage = getStorage(app);
-          let imageUrl = "";
-      
-         
-      
-          if (file) {
-            const imageRef = storageRef(storage, `images/${file.name}`);
-            const snapshot = await uploadBytes(imageRef, file);
-            imageUrl = await getDownloadURL(snapshot.ref);
-            
-          }
-      
-          
-          const docRef = await addDoc(collection(firestore, "pengaduan"), {
-            judulPengaduan,
-            deskripsiAduan,
-            buktiGambar: imageUrl,
-            timestamp: serverTimestamp(),
-          });
-      
-          console.log("Firestore success, doc id:", docRef.id);
-          alert("Data Saved Successfully");
-      
-          // Reset
-          setJudulPengaduan("");
-          setDeskripsiAduan("");
-          setFile(null);
-        } catch (error) {
-          console.error("Error saving data:", error);
-          alert(`Error: ${error.message}`);
-        }
-      };
-    
+  if (!judulPengaduan.trim() || !deskripsiAduan.trim()) {
+    alert("Judul dan deskripsi pengaduan wajib diisi.");
+    return;
+  }
+
+  try {
+    const firestore = getFirestore(app);
+    const storage = getStorage(app);
+    let imageUrl = "";
+
+    if (file) {
+      const imageRef = storageRef(storage, `images/${file.name}`);
+      const snapshot = await uploadBytes(imageRef, file);
+      imageUrl = await getDownloadURL(snapshot.ref);
+    }
+
+    const docRef = await addDoc(collection(firestore, "pengaduan"), {
+      judulPengaduan,
+      deskripsiAduan,
+      buktiGambar: imageUrl,
+      timestamp: serverTimestamp(),
+    });
+
+    console.log("Firestore success, doc id:", docRef.id);
+    alert("Data berhasil disimpan!");
+
+    // Reset form
+    setJudulPengaduan("");
+    setDeskripsiAduan("");
+    setFile(null);
+  } catch (error) {
+    console.error("Error saving data:", error);
+    alert(`Error: ${error.message}`);
+  }
+};
+
       return (
         <div className="Pengaduan">
           <h2 className="judul">Form Pengaduan</h2>
     
           <div className="Judul">
             <subjudul>Judul Pengaduan</subjudul>
+            <span className="required">*</span>
             <input
               type="text"
               className="input-judul"
@@ -63,6 +65,7 @@ function IsiPengaduan() {
     
           <div className="form-group">
             <subjudul>Deskripsi Aduan</subjudul>
+            <span className="required">*</span>
             <textarea
               value={deskripsiAduan}
               onChange={(e) => setDeskripsiAduan(e.target.value)}

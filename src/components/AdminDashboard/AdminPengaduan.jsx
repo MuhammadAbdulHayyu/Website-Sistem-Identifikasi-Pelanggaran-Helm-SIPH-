@@ -6,7 +6,9 @@ import './AdminPengaduan.css';
 const AdminDashboard = () => {
   const [pengaduan, setPengaduan] = useState([]);
   const [selectedPengaduan, setSelectedPengaduan] = useState(null);
-  const [filterStatus, setFilterStatus] = useState(''); // untuk filter radio
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterMonth, setFilterMonth] = useState('');
+  const [filterYear, setFilterYear] = useState('');
 
   const fetchPengaduan = async () => {
     const pengaduanCollection = collection(db, 'pengaduan');
@@ -24,11 +26,7 @@ const AdminDashboard = () => {
 
   const handleStatusChange = async (id, status) => {
     await updateDoc(doc(db, 'pengaduan', id), { status });
-  
-    // Update state utama
     fetchPengaduan();
-  
-    // Update state detail yang sedang dilihat
     setSelectedPengaduan((prev) => ({
       ...prev,
       status: status,
@@ -51,9 +49,18 @@ const AdminDashboard = () => {
     });
   };
 
-  const filteredPengaduan = filterStatus
-    ? pengaduan.filter(p => p.status === filterStatus)
-    : pengaduan;
+  // Ambil semua tahun dari data
+  const uniqueYears = Array.from(
+    new Set(pengaduan.map(p => p.timestamp?.toDate?.()?.getFullYear()).filter(Boolean))
+  );
+
+  const filteredPengaduan = pengaduan.filter(p => {
+    const date = p.timestamp?.toDate?.();
+    const matchStatus = filterStatus ? p.status === filterStatus : true;
+    const matchMonth = filterMonth ? (date?.getMonth() + 1) === parseInt(filterMonth) : true;
+    const matchYear = filterYear ? date?.getFullYear() === parseInt(filterYear) : true;
+    return matchStatus && matchMonth && matchYear;
+  });
 
   if (selectedPengaduan) {
     return (
@@ -65,18 +72,29 @@ const AdminDashboard = () => {
         <div className="waktu">Waktu: {formatWaktu(selectedPengaduan.timestamp)}</div>
 
         <div className="status-container">
-  {['Belum Diproses', 'Diproses', 'Selesai'].map((status) => (
-    <label key={status} className={`status-option ${selectedPengaduan.status === status ? 'selected' : ''}`}>
-      <input
-        type="radio"
-        checked={selectedPengaduan.status === status}
-        onChange={() => handleStatusChange(selectedPengaduan.id, status)}
-        style={{ display: 'none' }}
-      />
-      {status}
-    </label>
-  ))}
-</div>
+          {['Belum Diproses', 'Diproses', 'Selesai'].map((status) => (
+            <label
+              key={status}
+              className={`status-option ${
+                selectedPengaduan.status === status
+                  ? status === 'Belum Diproses'
+                    ? 'status-belum'
+                    : status === 'Diproses'
+                    ? 'status-diproses'
+                    : 'status-selesai'
+                  : ''
+              }`}
+            >
+              <input
+                type="radio"
+                checked={selectedPengaduan.status === status}
+                onChange={() => handleStatusChange(selectedPengaduan.id, status)}
+                style={{ display: 'none' }}
+              />
+              {status}
+            </label>
+          ))}
+        </div>
 
         <button className="delete-button" onClick={() => handleDelete(selectedPengaduan.id)}>🗑️ Hapus</button>
       </div>
@@ -87,7 +105,7 @@ const AdminDashboard = () => {
     <div className="admin-container">
       <h2>Dashboard Pengaduan</h2>
 
-      {/* Filter Radio */}
+      {/* Filter Status */}
       <div className="status-filter">
         {['Belum Diproses', 'Diproses', 'Selesai'].map((status) => (
           <label key={status}>
@@ -113,7 +131,40 @@ const AdminDashboard = () => {
         </label>
       </div>
 
-      {/* Table */}
+      {/* Filter Bulan dan Tahun */}
+      <div className="tanggal-filter">
+  <div className="filter-group">
+    <label htmlFor="bulan">Bulan</label>
+    <select
+      id="bulan"
+      value={filterMonth}
+      onChange={(e) => setFilterMonth(e.target.value)}
+    >
+      <option value="">Semua</option>
+      {Array.from({ length: 12 }, (_, i) => (
+        <option key={i + 1} value={i + 1}>
+          {new Date(0, i).toLocaleString('id-ID', { month: 'long' })}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <div className="filter-group">
+    <label htmlFor="tahun">Tahun</label>
+    <select
+      id="tahun"
+      value={filterYear}
+      onChange={(e) => setFilterYear(e.target.value)}
+    >
+      <option value="">Semua</option>
+      {uniqueYears.map((year) => (
+        <option key={year} value={year}>{year}</option>
+      ))}
+    </select>
+  </div>
+</div>
+
+      {/* Tabel Pengaduan */}
       <div className="table-container">
         <table className="pengaduan-table">
           <thead>
@@ -131,7 +182,15 @@ const AdminDashboard = () => {
                 <td>{index + 1}</td>
                 <td>{item.judulPengaduan}</td>
                 <td>{formatWaktu(item.timestamp)}</td>
-                <td>{item.status || 'Belum Diproses'}</td>
+                <td>
+                  <span className={
+                    item.status === 'Diproses' ? 'status-diproses' :
+                    item.status === 'Selesai' ? 'status-selesai' :
+                    'status-belum'
+                  }>
+                    {item.status || 'Belum Diproses'}
+                  </span>
+                </td>
                 <td className="aksi-cell">
                   <button
                     className="delete-button"

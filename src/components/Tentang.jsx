@@ -1,5 +1,5 @@
 import '../styles/Tentang.css';
-import SIPHImage from '../Assets/SIPH.jpg';
+import SIPHImage from '../Assets/LOGOSIPHV2.png';
 import { useEffect } from 'react'; 
 import ScrollReveal from "scrollreveal"; 
 

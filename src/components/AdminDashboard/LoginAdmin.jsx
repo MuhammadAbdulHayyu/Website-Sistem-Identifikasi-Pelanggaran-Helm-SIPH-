@@ -18,7 +18,7 @@ function LoginAdmin() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        navigate("/Dashboard", { replace: true }); // hindari bisa back
+        navigate("/Dashboard", { replace: true });
       }
     });
 
@@ -26,13 +26,9 @@ function LoginAdmin() {
   }, []);
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setMessage(null);
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/Dashboard", { replace: true }); 
+      navigate("/Dashboard", { replace: true });
     } catch (err) {
       setError("Email atau password salah.");
       console.error(err);
@@ -41,7 +37,7 @@ function LoginAdmin() {
 
   const handleForgotPassword = async () => {
     if (!email) {
-      setError("Masukkan email terlebih dahulu.");
+      setError("Email harap diisi terlebih dahulu.");
       return;
     }
 
@@ -63,13 +59,32 @@ function LoginAdmin() {
 
       <div className="login-box">
         <h2>MASUK ADMIN</h2>
-        <form onSubmit={handleLogin}>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setError(null);
+            setMessage(null);
+
+            if (!email) {
+              setError("Email harap diisi terlebih dahulu.");
+              return;
+            }
+
+            if (!password) {
+              setError("Password harap diisi terlebih dahulu.");
+              return;
+            }
+
+            handleLogin(e);
+          }}
+        >
           <label>Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
+            // removed required
           />
 
           <label>Password</label>
@@ -77,7 +92,7 @@ function LoginAdmin() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
+            // removed required
           />
 
           {error && <p className="error">{error}</p>}

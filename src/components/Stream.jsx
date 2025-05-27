@@ -1,10 +1,18 @@
 import React from 'react';
 
-const YouTubeLive = () => {
-  const videoId = 'NXnHKOhZmfU'; // Ganti dengan ID livestream YouTube kamu
+const Stream = () => {
+  const videoId = 'DjEWnJ1S7ks'; // Ganti dengan ID livestream YouTube kamu
 
   return (
-    <div style={{ position: 'relative', paddingTop: '56.25%', height: 0, overflow: 'hidden' }}>
+     <div
+      id="Stream" // ← Tambahkan ini agar bisa discroll
+      style={{
+        position: 'relative',
+        paddingTop: '56.25%',
+        height: 0,
+        overflow: 'hidden',
+      }}
+    >
       <iframe
         src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
         frameBorder="0"
@@ -23,4 +31,4 @@ const YouTubeLive = () => {
   );
 };
 
-export default YouTubeLive;
+export default Stream;

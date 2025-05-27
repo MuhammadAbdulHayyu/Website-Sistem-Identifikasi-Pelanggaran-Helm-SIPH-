@@ -1,5 +1,8 @@
 import '../styles/Keselamatan.css';
-import SIPHImage from '../Assets/SIPH.jpg';
+import SIPHImage from '../Assets/1.png';
+import SIPHImage2 from '../Assets/2.png';
+import SIPHImage3 from '../Assets/3.png';
+import SIPHImage4 from '../Assets/4.png';
 import { useEffect } from 'react'; 
 import ScrollReveal from "scrollreveal"; 
 
@@ -40,18 +43,20 @@ function Keselamatan() {
         <div className="text1">
           <h2>Kewajiban Hukum</h2>
           <p>
-            Berdasarkan Peraturan Pemerintah Republik Indonesia, penggunaan helm adalah kewajiban 
-            yang harus dipatuhi oleh setiap pengendara sepeda motor. Tidak mengenakan helm dapat dikenai sanksi tilang oleh petugas.
+             Berdasarkan Peraturan Pemerintah Republik Indonesia yang diatur dalam Pasal 57 ayat 
+            (1) dan ayat (2) UU No. 22 Tahun 2009 tentang Lalu Lintas dan Angkutan Jalan (“UU No. 22/2009”) yang berbunyi:<br /><br />
+            (1) Setiap Kendaraan Bermotor yang dioperasikan di Jalan wajib dilengkapi dengan perlengkapan Kendaraan Bermotor.<br /><br />
+            (2) Perlengkapan sebagaimana dimaksud pada ayat (1) bagi Sepeda Motor berupa helm standar nasional Indonesia.
           </p>
         </div>
         <div className="gambar">
-          <img src={SIPHImage} alt="Kewajiban Helm" />
+          <img src={SIPHImage2} alt="Kewajiban Helm" />
         </div>
       </div>
 
       <div className="section">
         <div className="gambar">
-          <img src={SIPHImage} alt="Keselamatan Kampus" />
+          <img src={SIPHImage3} alt="Keselamatan Kampus" />
         </div>
         <div className="text1">
           <h2>Keselamatan di Kampus</h2>
@@ -71,7 +76,7 @@ function Keselamatan() {
           </p>
         </div>
         <div className="gambar">
-          <img src={SIPHImage} alt="Contoh Kepedulian" />
+          <img src={SIPHImage4} alt="Contoh Kepedulian" />
         </div>
       </div>
     </div>

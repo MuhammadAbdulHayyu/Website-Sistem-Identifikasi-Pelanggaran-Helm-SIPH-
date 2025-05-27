@@ -71,3 +71,8 @@ button {
 button:hover {
     background: #b0b0b0;
 }
+
+.required {
+  color: red;
+  margin-left: 4px;
+}

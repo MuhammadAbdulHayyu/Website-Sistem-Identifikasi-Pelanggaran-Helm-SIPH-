@@ -9,59 +9,69 @@ const IsiPelanggaran = () => {
   const [dataBulanan, setDataBulanan] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const jumlahMotorSnapshot = await getDocs(collection(db, "jumlah_motor"));
-      let totalMotor = 0;
-      let totalPelanggaran = 0;
+  const fetchData = async () => {
+    const jumlahMotorSnapshot = await getDocs(collection(db, "jumlah_motor"));
+    let totalMotor = 0;
+    let totalPelanggaran = 0;
 
-      const bulanMap = {
-        "01": "JAN", "02": "FEB", "03": "MAR", "04": "APR", "05": "MEI", "06": "JUN",
-        "07": "JUL", "08": "AGU", "09": "SEP", "10": "OKT", "11": "NOV", "12": "DES"
-      };
+    const now = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(now.getDate() - 7);
 
-      const monthlyData = {};
-
-      jumlahMotorSnapshot.forEach((doc) => {
-        const data = doc.data();
-        const tanggal = data.waktu_mulai?.split("_")[0]; // Format: yyyy-mm-dd
-        const [tahun, bulan] = tanggal?.split("-") || [];
-        const bulanStr = bulanMap[bulan] || "UNKNOWN";
-        const labelBulanTahun = `${bulanStr} ${tahun}`;
-
-        totalMotor += data.jumlah_motor || 0;
-        totalPelanggaran += data.jumlah_pelanggaran || 0;
-
-        if (!monthlyData[labelBulanTahun]) {
-          monthlyData[labelBulanTahun] = {
-            name: labelBulanTahun,
-            pelanggaran: 0,
-            kendaraan: 0
-          };
-        }
-
-        monthlyData[labelBulanTahun].pelanggaran += data.jumlah_pelanggaran || 0;
-        monthlyData[labelBulanTahun].kendaraan += data.jumlah_motor || 0;
-      });
-
-      setDataMingguan([
-        { name: "Memakai Helm", value: totalMotor - totalPelanggaran, color: "#00b4d8" },
-        { name: "Tidak Memakai Helm", value: totalPelanggaran, color: "#777" }
-      ]);
-
-      const sortedBulanan = Object.values(monthlyData).sort((a, b) => {
-        const [bulanA, tahunA] = a.name.split(" ");
-        const [bulanB, tahunB] = b.name.split(" ");
-        const bulanUrut = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGU", "SEP", "OKT", "NOV", "DES"];
-        const indexA = bulanUrut.indexOf(bulanA) + parseInt(tahunA) * 12;
-        const indexB = bulanUrut.indexOf(bulanB) + parseInt(tahunB) * 12;
-        return indexA - indexB;
-      });
-
-      setDataBulanan(sortedBulanan.slice(-6)); // Ambil 6 bulan terakhir
+    const bulanMap = {
+      "01": "JAN", "02": "FEB", "03": "MAR", "04": "APR", "05": "MEI", "06": "JUN",
+      "07": "JUL", "08": "AGU", "09": "SEP", "10": "OKT", "11": "NOV", "12": "DES"
     };
 
-    fetchData();
-  }, []);
+    const monthlyData = {};
+
+    jumlahMotorSnapshot.forEach((doc) => {
+      const data = doc.data();
+      const tanggal = data.waktu_mulai?.split("_")[0]; // Format: yyyy-mm-dd
+      const [tahun, bulan] = tanggal?.split("-") || [];
+
+      const bulanStr = bulanMap[bulan] || "UNKNOWN";
+      const labelBulanTahun = `${bulanStr} ${tahun}`;
+
+      // Hitung statistik minggu ini
+      const waktuMulaiDate = new Date(tanggal);
+      if (waktuMulaiDate >= sevenDaysAgo && waktuMulaiDate <= now) {
+        totalMotor += data.jumlah_motor || 0;
+        totalPelanggaran += data.jumlah_pelanggaran || 0;
+      }
+
+      // Hitung data bulanan
+      if (!monthlyData[labelBulanTahun]) {
+        monthlyData[labelBulanTahun] = {
+          name: labelBulanTahun,
+          pelanggaran: 0,
+          kendaraan: 0
+        };
+      }
+      monthlyData[labelBulanTahun].pelanggaran += data.jumlah_pelanggaran || 0;
+      monthlyData[labelBulanTahun].kendaraan += data.jumlah_motor || 0;
+    });
+
+    // Update data state
+    setDataMingguan([
+      { name: "Memakai Helm", value: totalMotor - totalPelanggaran, color: "#00b4d8" },
+      { name: "Tidak Memakai Helm", value: totalPelanggaran, color: "#777" }
+    ]);
+
+    const sortedBulanan = Object.values(monthlyData).sort((a, b) => {
+      const [bulanA, tahunA] = a.name.split(" ");
+      const [bulanB, tahunB] = b.name.split(" ");
+      const bulanUrut = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGU", "SEP", "OKT", "NOV", "DES"];
+      const indexA = bulanUrut.indexOf(bulanA) + parseInt(tahunA) * 12;
+      const indexB = bulanUrut.indexOf(bulanB) + parseInt(tahunB) * 12;
+      return indexA - indexB;
+    });
+
+    setDataBulanan(sortedBulanan.slice(-6));
+  };
+
+  fetchData();
+}, []);
 
   const totalKendaraan = dataMingguan.reduce((sum, entry) => sum + entry.value, 0);
 

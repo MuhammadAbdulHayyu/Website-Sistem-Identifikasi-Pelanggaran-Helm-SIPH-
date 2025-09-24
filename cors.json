@@ -1,6 +1,6 @@
 [
   {
-    "origin": ["http://localhost:3000"],
+    "origin": ["https://capstonesiph-d4637.web.app"],
     "method": ["GET"],
     "maxAgeSeconds": 3600
   }

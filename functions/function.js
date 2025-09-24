@@ -13,7 +13,7 @@ const hapusFotoLama = async (bucketName, prefix) => {
 
   const now = new Date();
   const batasWaktu = new Date();
-  batasWaktu.setDate(now.getDate() - 3); // hanya berdasarkan tanggal
+  batasWaktu.setDate(now.getDate() - 14); // hanya berdasarkan tanggal
 
   console.log(`Batas waktu: ${batasWaktu.toISOString()}`);
   console.log(`Total file ditemukan: ${files.length}`);

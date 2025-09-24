@@ -49,18 +49,28 @@ const AdminDashboard = () => {
     });
   };
 
-  // Ambil semua tahun dari data
   const uniqueYears = Array.from(
     new Set(pengaduan.map(p => p.timestamp?.toDate?.()?.getFullYear()).filter(Boolean))
   );
 
-  const filteredPengaduan = pengaduan.filter(p => {
+  const filteredPengaduan = pengaduan
+  .filter(p => {
     const date = p.timestamp?.toDate?.();
-    const matchStatus = filterStatus ? p.status === filterStatus : true;
+    const matchStatus = filterStatus ? (p.status || 'Belum Diproses') === filterStatus : true;
     const matchMonth = filterMonth ? (date?.getMonth() + 1) === parseInt(filterMonth) : true;
     const matchYear = filterYear ? date?.getFullYear() === parseInt(filterYear) : true;
     return matchStatus && matchMonth && matchYear;
+  })
+  .sort((a, b) => {
+    const aTime = a.timestamp?.toDate?.()?.getTime() || 0;
+    const bTime = b.timestamp?.toDate?.()?.getTime() || 0;
+    
+    if (aTime !== bTime) return aTime - bTime;
+
+    // Jika timestamp sama, urutkan berdasarkan id dokumen (atau field lain yg unik)
+    return (a.id || '').localeCompare(b.id || '');
   });
+
 
   if (selectedPengaduan) {
     return (
@@ -133,36 +143,36 @@ const AdminDashboard = () => {
 
       {/* Filter Bulan dan Tahun */}
       <div className="tanggal-filter">
-  <div className="filter-group">
-    <label htmlFor="bulan">Bulan</label>
-    <select
-      id="bulan"
-      value={filterMonth}
-      onChange={(e) => setFilterMonth(e.target.value)}
-    >
-      <option value="">Semua</option>
-      {Array.from({ length: 12 }, (_, i) => (
-        <option key={i + 1} value={i + 1}>
-          {new Date(0, i).toLocaleString('id-ID', { month: 'long' })}
-        </option>
-      ))}
-    </select>
-  </div>
+        <div className="filter-group">
+          <label htmlFor="bulan">Bulan</label>
+          <select
+            id="bulan"
+            value={filterMonth}
+            onChange={(e) => setFilterMonth(e.target.value)}
+          >
+            <option value="">Semua</option>
+            {Array.from({ length: 12 }, (_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {new Date(0, i).toLocaleString('id-ID', { month: 'long' })}
+              </option>
+            ))}
+          </select>
+        </div>
 
-  <div className="filter-group">
-    <label htmlFor="tahun">Tahun</label>
-    <select
-      id="tahun"
-      value={filterYear}
-      onChange={(e) => setFilterYear(e.target.value)}
-    >
-      <option value="">Semua</option>
-      {uniqueYears.map((year) => (
-        <option key={year} value={year}>{year}</option>
-      ))}
-    </select>
-  </div>
-</div>
+        <div className="filter-group">
+          <label htmlFor="tahun">Tahun</label>
+          <select
+            id="tahun"
+            value={filterYear}
+            onChange={(e) => setFilterYear(e.target.value)}
+          >
+            <option value="">Semua</option>
+            {uniqueYears.map((year) => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+        </div>
+      </div>
 
       {/* Tabel Pengaduan */}
       <div className="table-container">
@@ -178,7 +188,10 @@ const AdminDashboard = () => {
           </thead>
           <tbody>
             {filteredPengaduan.map((item, index) => (
-              <tr key={item.id} onClick={() => setSelectedPengaduan(item)}>
+              <tr
+                key={item.id}
+                onClick={() => setSelectedPengaduan({ ...item, status: item.status || 'Belum Diproses' })}
+              >
                 <td>{index + 1}</td>
                 <td>{item.judulPengaduan}</td>
                 <td>{formatWaktu(item.timestamp)}</td>

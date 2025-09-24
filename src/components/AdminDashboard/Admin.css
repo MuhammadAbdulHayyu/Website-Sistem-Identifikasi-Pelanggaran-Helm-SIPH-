@@ -54,11 +54,11 @@
     width: 100%;
   }
 
-.live-text {
-    color: white;
+/* .live-text {
+    color: rgb(0, 0, 0);
     font-size: 18px;
     font-weight: bold;
-}
+} */
 
 
 .dashboard-widgets {
@@ -131,3 +131,67 @@ th, td {
 .status-selesai {
   background-color: #5cb85c;
 }
+
+/* Tambahan styling untuk filter */
+.widget select,
+.chart-container select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+}
+
+.widget select:focus,
+.chart-container select:focus {
+  border-color: #00b4d8;
+  outline: none;
+}
+
+/* Tombol "Minggu Ini" */
+.widget button {
+  padding: 8px 16px;
+  background-color: #00b4d8;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.widget button:hover {
+  background-color: #0096c7;
+}
+
+/* Layout filter dropdown dan tombol */
+.widget > div,
+.chart-container > div {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+/* Tambahan spacing agar tidak terlalu padat */
+.widget h3,
+.chart-container h3 {
+  margin-bottom: 10px;
+}
+
+.widget input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.widget input[type="date"]:focus {
+  border-color: #00b4d8;
+  box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.2);
+  outline: none;
+}
+

@@ -1,11 +1,11 @@
 import React from 'react';
 
 const Stream = () => {
-  const videoId = 'DjEWnJ1S7ks'; // Ganti dengan ID livestream YouTube kamu
+  const channelId = 'UCmgz9mlNXUXw44-F8zWYDew'; // Ganti dengan channelId dari channel YouTube kamu
 
   return (
-     <div
-      id="Stream" // ← Tambahkan ini agar bisa discroll
+    <div
+      id="Stream"
       style={{
         position: 'relative',
         paddingTop: '56.25%',
@@ -14,7 +14,7 @@ const Stream = () => {
       }}
     >
       <iframe
-        src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+        src={`https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1`}
         frameBorder="0"
         allow="autoplay; encrypted-media"
         allowFullScreen

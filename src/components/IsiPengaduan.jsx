@@ -1,90 +1,129 @@
 import React, { useState } from "react";
 import app from "../firebaseConfig";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getFirestore, collection, addDoc,serverTimestamp,} from "firebase/firestore";
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import "../styles/IsiPengaduan.css";
 
+// Fungsi untuk mencegah XSS dengan escape karakter HTML
+const escapeHTML = (str) =>
+  str.replace(/[&<>"']/g, function (tag) {
+    const chars = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return chars[tag] || tag;
+  });
 
 function IsiPengaduan() {
-    const [judulPengaduan, setJudulPengaduan] = useState("");
-    const [deskripsiAduan, setDeskripsiAduan] = useState("");
-    const [file, setFile] = useState(null);
+  const [judulPengaduan, setJudulPengaduan] = useState("");
+  const [deskripsiAduan, setDeskripsiAduan] = useState("");
+  const [file, setFile] = useState(null);
 
-    const saveData = async () => {
-  if (!judulPengaduan.trim() || !deskripsiAduan.trim()) {
-    alert("Judul dan deskripsi pengaduan wajib diisi.");
-    return;
-  }
-
-  try {
-    const firestore = getFirestore(app);
-    const storage = getStorage(app);
-    let imageUrl = "";
-
-    if (file) {
-      const imageRef = storageRef(storage, `images/${file.name}`);
-      const snapshot = await uploadBytes(imageRef, file);
-      imageUrl = await getDownloadURL(snapshot.ref);
+  const saveData = async () => {
+    if (!judulPengaduan.trim() || !deskripsiAduan.trim()) {
+      alert("Judul dan deskripsi pengaduan wajib diisi.");
+      return;
     }
 
-    const docRef = await addDoc(collection(firestore, "pengaduan"), {
-      judulPengaduan,
-      deskripsiAduan,
-      buktiGambar: imageUrl,
-      timestamp: serverTimestamp(),
-    });
+    try {
+      const firestore = getFirestore(app);
+      const storage = getStorage(app);
+      let imageUrl = "";
 
-    console.log("Firestore success, doc id:", docRef.id);
-    alert("Data berhasil disimpan!");
+      if (file) {
+        const imageRef = storageRef(storage, `images/${file.name}`);
+        const snapshot = await uploadBytes(imageRef, file);
+        imageUrl = await getDownloadURL(snapshot.ref);
+      }
 
-    // Reset form
-    setJudulPengaduan("");
-    setDeskripsiAduan("");
-    setFile(null);
-  } catch (error) {
-    console.error("Error saving data:", error);
-    alert(`Error: ${error.message}`);
-  }
-};
+      // Escape input sebelum dikirim
+      const cleanJudul = escapeHTML(judulPengaduan.trim());
+      const cleanDeskripsi = escapeHTML(deskripsiAduan.trim());
 
-      return (
-        <div className="Pengaduan">
-          <h2 className="judul">Form Pengaduan</h2>
-    
-          <div className="Judul">
-            <subjudul>Judul Pengaduan</subjudul>
-            <span className="required">*</span>
-            <input
-              type="text"
-              className="input-judul"
-              value={judulPengaduan}
-              onChange={(e) => setJudulPengaduan(e.target.value)}
-              placeholder="Judul Pengaduan"
-            />
-          </div>
-    
-          <div className="form-group">
-            <subjudul>Deskripsi Aduan</subjudul>
-            <span className="required">*</span>
-            <textarea
-              value={deskripsiAduan}
-              onChange={(e) => setDeskripsiAduan(e.target.value)}
-              placeholder="Deskripsi Aduan"
-            />
-          </div>
-    
-          <div className="form-group file-upload">
-            <subjudul>Bukti Gambar</subjudul>
-            <input
-              type="file"
-              className="input-bukti"
-              onChange={(e) => setFile(e.target.files[0])}
-            />
-          </div>
-    
-          <button onClick={saveData}>Submit</button>
-        </div>
-      );
+      const docRef = await addDoc(collection(firestore, "pengaduan"), {
+        judulPengaduan: cleanJudul,
+        deskripsiAduan: cleanDeskripsi,
+        buktiGambar: imageUrl,
+        timestamp: serverTimestamp(),
+      });
+
+      console.log("Firestore success, doc id:", docRef.id);
+      alert("Data Berhasil Disimpan !");
+
+      // Reset form
+      setJudulPengaduan("");
+      setDeskripsiAduan("");
+      setFile(null);
+    } catch (error) {
+      console.error("Error saving data:", error);
+      alert(`Error: ${error.message}`);
     }
-    
-    export default IsiPengaduan;
+  };
+
+  return (
+    <div className="Pengaduan">
+      <h2 className="judul">Form Pengaduan</h2>
+
+      <div className="Judul">
+        <subjudul>Judul Pengaduan</subjudul>
+        <span className="required">*</span>
+        <input
+          type="text"
+          className="input-judul"
+          value={judulPengaduan}
+          onChange={(e) => setJudulPengaduan(e.target.value)}
+          placeholder="Judul Pengaduan"
+        />
+      </div>
+
+      <div className="form-group">
+        <subjudul>Deskripsi Aduan</subjudul>
+        <span className="required">*</span>
+        <textarea
+          value={deskripsiAduan}
+          onChange={(e) => setDeskripsiAduan(e.target.value)}
+          placeholder="Deskripsi Aduan"
+        />
+      </div>
+
+      <div className="form-group file-upload">
+        <subjudul>Bukti Gambar</subjudul>
+        <input
+          type="file"
+          className="input-bukti"
+          accept=".jpg,.jpeg,.png"
+          onChange={(e) => {
+            const selectedFile = e.target.files[0];
+            if (selectedFile) {
+              const fileType = selectedFile.type;
+              if (fileType !== "image/jpeg" && fileType !== "image/png") {
+                window.alert("File harus berformat jpg dan png!");
+                e.target.value = null;
+                setFile(null);
+              } else {
+                setFile(selectedFile);
+              }
+            }
+          }}
+        />
+      </div>
+
+      <button onClick={saveData}>Submit</button>
+    </div>
+  );
+}
+
+export default IsiPengaduan;
